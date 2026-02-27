@@ -1,0 +1,3 @@
+This is a sample text for G2P transliteration testing.
+The goal is to test performance and accuracy.
+Gofonix should handle multiple words correctly.

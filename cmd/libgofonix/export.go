@@ -8,5 +8,3 @@ func Transliterate(input *C.char) *C.char {
 	// TODO: Implement wrapper logic
 	return input
 }
-
-func main() {}

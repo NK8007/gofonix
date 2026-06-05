@@ -86,7 +86,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **ADRs ADR-0001, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0007,
   ADR-0008** frozen for v0.1.
 
-[Unreleased]: https://github.com/gofonix/gofonix/compare/v0.3.0-alpha...HEAD
-[0.3.0-alpha]: https://github.com/gofonix/gofonix/releases/tag/v0.3.0-alpha
-[0.2.0]: https://github.com/gofonix/gofonix/releases/tag/v0.2.0
-[0.1.0]: https://github.com/gofonix/gofonix/releases/tag/v0.1.0
+[Unreleased]: https://github.com/NK8007/gofonix/compare/v0.3.0-alpha...HEAD
+[0.3.0-alpha]: https://github.com/NK8007/gofonix/releases/tag/v0.3.0-alpha
+[0.2.0]: https://github.com/NK8007/gofonix/releases/tag/v0.2.0
+[0.1.0]: https://github.com/NK8007/gofonix/releases/tag/v0.1.0

@@ -3,8 +3,8 @@ package benchmarks_test
 import (
 	"testing"
 
-	"github.com/gofonix/gofonix/internal/lang/en/fallback"
-	g2p "github.com/gofonix/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/internal/lang/en/fallback"
+	g2p "github.com/NK8007/gofonix/pkg/g2p"
 )
 
 // Synthetic fixtures for the fallback benchmarks. These are inline string

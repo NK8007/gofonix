@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gofonix/gofonix/internal/golden"
-	"github.com/gofonix/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/internal/golden"
+	"github.com/NK8007/gofonix/pkg/g2p"
 )
 
 // updateGolden is set by the -update flag OR the GOFONIX_UPDATE_GOLDEN=1 env

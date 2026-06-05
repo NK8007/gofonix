@@ -15,8 +15,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gofonix/gofonix/internal/dict"
-	"github.com/gofonix/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/internal/dict"
+	"github.com/NK8007/gofonix/pkg/g2p"
 )
 
 // fixturePath resolves a fixture file relative to this package directory. The

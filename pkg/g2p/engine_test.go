@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 func TestNewDefaultsAndValidation(t *testing.T) {

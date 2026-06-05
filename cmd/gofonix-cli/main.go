@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gofonix/gofonix/pkg/g2p"
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // cliVersion identifies the CLI surface independently of the engine version.

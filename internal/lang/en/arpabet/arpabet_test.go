@@ -3,7 +3,7 @@ package arpabet
 import (
 	"testing"
 
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 func TestStripStress(t *testing.T) {

@@ -6,11 +6,11 @@ import (
 	"errors"
 	"log"
 
-	"github.com/gofonix/gofonix/internal/dict"
-	"github.com/gofonix/gofonix/internal/lang/en/arpabet"
-	"github.com/gofonix/gofonix/internal/lang/en/fallback"
-	"github.com/gofonix/gofonix/internal/tokenizer"
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/internal/dict"
+	"github.com/NK8007/gofonix/internal/lang/en/arpabet"
+	"github.com/NK8007/gofonix/internal/lang/en/fallback"
+	"github.com/NK8007/gofonix/internal/tokenizer"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // Result-record and component version constants recorded in ResultMetadata

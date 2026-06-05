@@ -3,7 +3,7 @@ package g2p
 import (
 	"testing"
 
-	"github.com/gofonix/gofonix/internal/lang/en/fallback"
+	"github.com/NK8007/gofonix/internal/lang/en/fallback"
 )
 
 // Phase 2 / Slice 3: deterministic OOV rule-fallback integration into Process()

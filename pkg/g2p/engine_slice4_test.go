@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // boundaryMask is the boundary phoneme (ID 0) FeatureMask per ADR-0008

@@ -1,6 +1,6 @@
 package arpabet
 
-import "github.com/gofonix/gofonix/pkg/phoneme"
+import "github.com/NK8007/gofonix/pkg/phoneme"
 
 // phonemeFeatures maps neutral phoneme ID to its FeatureMask per ADR-0008
 // v0.1-en. The decimal lo word in each trailing comment is the authoritative

@@ -1,6 +1,6 @@
 package g2p
 
-import "github.com/gofonix/gofonix/pkg/phoneme"
+import "github.com/NK8007/gofonix/pkg/phoneme"
 
 // Source records the provenance of a token's pronunciation (ADR-0001,
 // ADR-0005, ADR-0009). All three values are emitted from v0.2 onward: a

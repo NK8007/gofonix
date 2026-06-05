@@ -17,8 +17,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/gofonix/gofonix/pkg/g2p"
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // Mode strings used in golden records. These are the canonical, stable

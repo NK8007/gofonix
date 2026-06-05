@@ -3,7 +3,7 @@ package arpabet
 import (
 	"strings"
 
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // MapSymbol maps a single (possibly stressed) ARPAbet symbol to a neutral

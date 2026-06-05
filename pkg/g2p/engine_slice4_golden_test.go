@@ -31,8 +31,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gofonix/gofonix/internal/golden"
-	"github.com/gofonix/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/internal/golden"
+	"github.com/NK8007/gofonix/pkg/g2p"
 )
 
 // updateFallbackGolden mirrors the -update / GOFONIX_UPDATE_GOLDEN convention

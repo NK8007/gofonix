@@ -9,7 +9,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/gofonix/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/pkg/g2p"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 ## Installation
 
 ```sh
-go get github.com/gofonix/gofonix@v0.3.0-alpha
+go get github.com/NK8007/gofonix@v0.3.0-alpha
 ```
 
 Requires Go 1.22+. The default build is stdlib-only and has no runtime dependencies.
@@ -39,7 +39,7 @@ Gofonix selects its CMUdict backend at build time (ADR-0010):
 ## CLI
 
 ```sh
-go install github.com/gofonix/gofonix/cmd/gofonix-cli@v0.3.0-alpha
+go install github.com/NK8007/gofonix/cmd/gofonix-cli@v0.3.0-alpha
 gofonix-cli --language en --mode batch --input "hello world" --output json
 ```
 
@@ -47,7 +47,7 @@ Flags: `--language`, `--mode {batch|causal}`, `--input`, `--dict-path`, `--outpu
 
 ## API Overview
 
-The public API lives in [`pkg/g2p`](https://pkg.go.dev/github.com/gofonix/gofonix/pkg/g2p) and [`pkg/phoneme`](https://pkg.go.dev/github.com/gofonix/gofonix/pkg/phoneme):
+The public API lives in [`pkg/g2p`](https://pkg.go.dev/github.com/NK8007/gofonix/pkg/g2p) and [`pkg/phoneme`](https://pkg.go.dev/github.com/NK8007/gofonix/pkg/phoneme):
 
 - `g2p.Engine` — stateless analyzer constructed with `g2p.New(Options)`.
 - `Engine.Process(input string) (Result, error)` — batch entry point; the full input is supplied in a single call.

@@ -1,8 +1,8 @@
 package g2p
 
 import (
-	"github.com/gofonix/gofonix/internal/lang/en/arpabet"
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/internal/lang/en/arpabet"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // FeatureForPhoneme returns the v0.1-en FeatureMask for a neutral phoneme

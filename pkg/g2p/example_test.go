@@ -3,7 +3,7 @@ package g2p_test
 import (
 	"fmt"
 
-	"github.com/gofonix/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/pkg/g2p"
 )
 
 // sourceName renders a g2p.Source for stable example output (the integer enum

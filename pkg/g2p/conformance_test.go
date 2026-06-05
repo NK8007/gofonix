@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofonix/gofonix/pkg/g2p"
-	"github.com/gofonix/gofonix/pkg/phoneme"
+	"github.com/NK8007/gofonix/pkg/g2p"
+	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
 // Conformance tests pin the cross-cutting v0.1 contracts that the ADRs require

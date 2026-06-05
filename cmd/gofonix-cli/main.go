@@ -173,12 +173,13 @@ func resolveInput(inputFlag string, stdin io.Reader) (string, error) {
 	return string(buf), nil
 }
 
-// writeJSON serialises the entire Result as indented JSON. Note: the
-// FeatureStream entries are FeatureMask values whose internal bit-array is
-// unexported and therefore not surfaced by encoding/json. That is the
-// intended v0.3 behaviour — the public mask accessors (Lo, Hi, IsZero) are
-// the stable interface and a JSON dump is for human inspection, not for
-// round-trip reconstruction of the mask bits.
+// writeJSON serialises the entire Result as indented JSON. FeatureStream
+// entries are FeatureMask values; each is rendered as {"lo":...,"hi":...} via
+// FeatureMask.MarshalJSON, matching the {lo,hi} feature-word form of the
+// golden JSONL schema. (Before that method existed the masks serialised as
+// empty objects because the underlying bit-array is unexported.) The JSON dump
+// is for human inspection; the public mask accessors (Lo, Hi, IsZero) remain
+// the stable programmatic interface.
 func writeJSON(w io.Writer, res g2p.Result) error {
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "  ")

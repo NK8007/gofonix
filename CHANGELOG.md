@@ -26,6 +26,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `GofonixVersion: v0.3.1-alpha` / `SchemaVersion: gofonix-result-v0.1`
   consistently.
 
+### Fixed
+- **`phoneme.FeatureMask` JSON serialization.** `FeatureMask` now marshals as
+  `{"lo":...,"hi":...}` (matching the golden JSONL `{lo,hi}` feature-word
+  form) instead of an empty object `{}`. The mask's bit-array is unexported, so
+  `encoding/json` previously dropped its value; both the CLI `--output json`
+  `FeatureStream` and token-level features now surface the real `lo`/`hi`
+  words. Serialization-only fix — no change to mask, feature schema,
+  projection, `SchemaVersion`, or the golden JSONL records.
+
 ### Notes
 - Golden corpus records were updated for the single field `gofonix_version`
   only; `schema_version`, `feature_schema_version`, `dictionary_id`,

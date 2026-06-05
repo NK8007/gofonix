@@ -1,6 +1,66 @@
 package phoneme
 
-import "testing"
+import (
+	"encoding/json"
+	"strings"
+	"testing"
+)
+
+// TestFeatureMaskMarshalJSON pins the JSON serialization of FeatureMask to the
+// {"lo":...,"hi":...} feature-word form required by the golden JSONL schema
+// (docs/golden_jsonl_schema.md). It is a regression guard against the prior
+// behaviour where the unexported bits field caused encoding/json to emit an
+// empty object {}, silently dropping every feature value from a marshalled
+// Result (notably the CLI's --output json FeatureStream).
+func TestFeatureMaskMarshalJSON(t *testing.T) {
+	// A representative non-zero mask using both the low and high words so the
+	// test would fail if either word were dropped or swapped.
+	m := FromBits(2, 10, 64) // lo has bits 2 and 10 set (0x404 = 1028), hi has bit 0 (1)
+	wantLo := uint64(1<<2 | 1<<10)
+	wantHi := uint64(1)
+	if m.Lo() != wantLo || m.Hi() != wantHi {
+		t.Fatalf("test setup wrong: Lo/Hi = %d/%d, want %d/%d", m.Lo(), m.Hi(), wantLo, wantHi)
+	}
+
+	b, err := json.Marshal(m)
+	if err != nil {
+		t.Fatalf("json.Marshal(FeatureMask) failed: %v", err)
+	}
+	got := string(b)
+
+	// Hard regression check: the mask MUST NOT serialize as an empty object.
+	if got == "{}" {
+		t.Fatalf("FeatureMask serialized as empty object %q; feature values were dropped", got)
+	}
+	if !strings.Contains(got, "\"lo\":") || !strings.Contains(got, "\"hi\":") {
+		t.Fatalf("FeatureMask JSON %q missing \"lo\"/\"hi\" keys; want {lo,hi} form", got)
+	}
+
+	// Round-trip the JSON into a neutral {lo,hi} struct and confirm the values
+	// match the accessors exactly (lossless).
+	var back struct {
+		Lo uint64 `json:"lo"`
+		Hi uint64 `json:"hi"`
+	}
+	if err := json.Unmarshal(b, &back); err != nil {
+		t.Fatalf("unmarshal of FeatureMask JSON %q failed: %v", got, err)
+	}
+	if back.Lo != wantLo || back.Hi != wantHi {
+		t.Errorf("round-trip lo/hi = %d/%d, want %d/%d (json=%q)", back.Lo, back.Hi, wantLo, wantHi, got)
+	}
+
+	// The zero mask must still serialize with explicit zero words, never {}.
+	zb, err := json.Marshal(Zero())
+	if err != nil {
+		t.Fatalf("json.Marshal(Zero()) failed: %v", err)
+	}
+	if string(zb) == "{}" {
+		t.Fatalf("Zero() serialized as empty object %q; want explicit {\"lo\":0,\"hi\":0}", string(zb))
+	}
+	if string(zb) != `{"lo":0,"hi":0}` {
+		t.Errorf("Zero() JSON = %q, want {\"lo\":0,\"hi\":0}", string(zb))
+	}
+}
 
 func TestZeroIsZero(t *testing.T) {
 	if !Zero().IsZero() {

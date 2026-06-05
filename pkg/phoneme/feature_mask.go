@@ -1,5 +1,7 @@
 package phoneme
 
+import "encoding/json"
+
 // FeatureMask is an opaque bitmask holding up to 128 phonological feature bits.
 //
 // It must NOT be a uint64 alias — it is a struct (Principle 5; ADR-0002). The
@@ -7,6 +9,23 @@ package phoneme
 // word; the high word is reserved for future schema versions.
 type FeatureMask struct {
 	bits [2]uint64
+}
+
+// MarshalJSON renders the mask as {"lo":<low 64 bits>,"hi":<high 64 bits>},
+// matching the {lo,hi} feature-word form used by the golden JSONL schema
+// (docs/golden_jsonl_schema.md) and internal/golden.Mask.
+//
+// Without this method encoding/json would emit an empty object {} for the
+// mask because the underlying bits field is unexported, which silently dropped
+// the feature values from any json.Marshal of a Result (e.g. the CLI's
+// --output json). This is a serialization-only fix: it surfaces the existing
+// Lo()/Hi() accessor values and does not change the mask, the feature schema,
+// projection, or any bit semantics.
+func (m FeatureMask) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Lo uint64 `json:"lo"`
+		Hi uint64 `json:"hi"`
+	}{Lo: m.bits[0], Hi: m.bits[1]})
 }
 
 // Zero returns the zero FeatureMask (no features set).

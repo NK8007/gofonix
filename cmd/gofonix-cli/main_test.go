@@ -109,6 +109,56 @@ func TestCLIBasicJSON(t *testing.T) {
 	}
 }
 
+// TestCLIFeatureStreamJSONNotEmpty is a regression guard for the FeatureMask
+// JSON serialization. It drives the CLI with --output json and asserts that
+// every FeatureStream entry serialises as a {"lo":...,"hi":...} object rather
+// than an empty object {} (the prior behaviour, caused by FeatureMask's
+// unexported bit-array). At least one entry for the input "cat" must carry a
+// non-zero lo word, proving the feature values actually survive serialization.
+func TestCLIFeatureStreamJSONNotEmpty(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	code := run(
+		[]string{"--input", "cat", "--mode", "batch", "--output", "json"},
+		strings.NewReader(""),
+		&stdout,
+		&stderr,
+	)
+	if code != 0 {
+		t.Fatalf("--input \"cat\" --output json exited with code %d (stderr=%q); want 0", code, stderr.String())
+	}
+
+	var parsed struct {
+		FeatureStream []map[string]any `json:"FeatureStream"`
+	}
+	if err := json.NewDecoder(&stdout).Decode(&parsed); err != nil {
+		t.Fatalf("CLI emitted non-JSON output: %v", err)
+	}
+
+	if len(parsed.FeatureStream) == 0 {
+		t.Fatalf("FeatureStream is empty for input \"cat\"; want one entry per input byte")
+	}
+
+	sawNonZeroLo := false
+	for i, mask := range parsed.FeatureStream {
+		// Each mask MUST serialise with explicit lo/hi keys, never as {}.
+		if len(mask) == 0 {
+			t.Fatalf("FeatureStream[%d] serialised as empty object {}; feature mask values were dropped", i)
+		}
+		lo, okLo := mask["lo"]
+		_, okHi := mask["hi"]
+		if !okLo || !okHi {
+			t.Fatalf("FeatureStream[%d] = %v; missing \"lo\"/\"hi\" keys (want {lo,hi} form)", i, mask)
+		}
+		if loVal, ok := lo.(float64); ok && loVal != 0 {
+			sawNonZeroLo = true
+		}
+	}
+	if !sawNonZeroLo {
+		t.Fatalf("no FeatureStream entry had a non-zero \"lo\" for input \"cat\"; "+
+			"masks appear to be all-zero, suggesting feature values are not surfaced: %v", parsed.FeatureStream)
+	}
+}
+
 // TestCLIInvalidMode confirms that an unknown --mode value causes exit code 1
 // and prints a diagnostic on stderr (per the brief: "Nieznany --mode skutkuje
 // os.Exit(1) z komunikatem błędu na stderr").

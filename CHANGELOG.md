@@ -6,6 +6,34 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.1-alpha] — 2026-06-06
+
+### Changed
+- **Release version metadata cleanup.** `ResultMetadata.GofonixVersion` now
+  reports the Gofonix release/module version (`v0.3.1-alpha`) instead of the
+  former `v0.1.0`. The result schema remains separately pinned as
+  `SchemaVersion = "gofonix-result-v0.1"`; `FeatureSchemaVersion` remains
+  `v0.1-en`. This is a metadata-semantics correction only — it is **not** a
+  change to the JSON result schema.
+- **Single source of truth for versions.** The release version, result-record
+  schema version, and feature schema version are now defined once in
+  `pkg/g2p/version.go` (`ReleaseVersion`, `schemaVersion`,
+  `featureSchemaVersion`). `engine.go` no longer defines an independent
+  `gofonixVersion = "v0.1.0"`, and the CLI no longer carries a duplicate
+  `engineGofonixVersion`; `cmd/gofonix-cli` and the engine both report
+  `g2p.ReleaseVersion`.
+- **CLI `--version`** now reports `gofonix-cli v0.3.1-alpha` /
+  `GofonixVersion: v0.3.1-alpha` / `SchemaVersion: gofonix-result-v0.1`
+  consistently.
+
+### Notes
+- Golden corpus records were updated for the single field `gofonix_version`
+  only; `schema_version`, `feature_schema_version`, `dictionary_id`,
+  `dictionary_checksum`, `fallback_rules_version`, tokens, phonemes,
+  alignment, and feature streams are unchanged.
+- No changes to G2P logic, tokenization, fallback rules, ARPAbet mapping,
+  alignment, `FeatureStream` semantics, the dictionary loader, or causal mode.
+
 ## [0.3.0-alpha] — 2026-06-03
 
 ### Added
@@ -34,9 +62,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   + ADR index), and this `CHANGELOG.md`.
 
 ### Notes
-- `ResultMetadata.GofonixVersion` is intentionally still reported as
-  `"v0.1.0"` — the value is the frozen result-record version pinned by
-  ADR-0001 and is decoupled from the module release tag.
+- `ResultMetadata.GofonixVersion` reports the Gofonix release/module version.
+  The result schema is separately pinned as `SchemaVersion =
+  "gofonix-result-v0.1"` (ADR-0001). (Superseded in 0.3.1-alpha: earlier
+  pre-releases reported `GofonixVersion = "v0.1.0"`; this was a metadata
+  inconsistency, corrected in 0.3.1-alpha so the field carries the release
+  version while `SchemaVersion` remains the frozen result-record version.)
 - Compliance files (`LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES`) are still
   absent from the repository root. They must be added before any non-alpha
   tag because the full-CMUdict opt-in places the user at the CMU/BSD license
@@ -86,7 +117,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **ADRs ADR-0001, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0007,
   ADR-0008** frozen for v0.1.
 
-[Unreleased]: https://github.com/NK8007/gofonix/compare/v0.3.0-alpha...HEAD
+[Unreleased]: https://github.com/NK8007/gofonix/compare/v0.3.1-alpha...HEAD
+[0.3.1-alpha]: https://github.com/NK8007/gofonix/releases/tag/v0.3.1-alpha
 [0.3.0-alpha]: https://github.com/NK8007/gofonix/releases/tag/v0.3.0-alpha
 [0.2.0]: https://github.com/NK8007/gofonix/releases/tag/v0.2.0
 [0.1.0]: https://github.com/NK8007/gofonix/releases/tag/v0.1.0

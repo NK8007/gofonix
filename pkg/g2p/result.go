@@ -95,7 +95,9 @@ type TokenResult struct {
 // ResultMetadata exposes reproducibility-relevant versions so experiment
 // harnesses cannot silently omit them (ADR-0001, Cross-issue E).
 type ResultMetadata struct {
-	// GofonixVersion is the gofonix release version, e.g. "v0.1.0".
+	// GofonixVersion is the Gofonix release/module version that produced this
+	// result. It is distinct from SchemaVersion, FeatureSchemaVersion, dictionary
+	// IDs, and fallback rule versions.
 	GofonixVersion string
 	// FeatureSchemaVersion is the phonological feature schema version (ADR-0008).
 	FeatureSchemaVersion string

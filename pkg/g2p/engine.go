@@ -13,14 +13,16 @@ import (
 	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
-// Result-record and component version constants recorded in ResultMetadata
+// Component version constants recorded in ResultMetadata
 // (ADR-0001, ADR-0004, ADR-0005, ADR-0006, ADR-0008).
+//
+// The Gofonix release version (ReleaseVersion), the result-record schema
+// version (schemaVersion), and the feature schema version (featureSchemaVersion)
+// are the single-source-of-truth identifiers defined in version.go and are
+// referenced — not redefined — here.
 const (
-	schemaVersion        = "gofonix-result-v0.1"
-	gofonixVersion       = "v0.1.0"
-	featureSchemaVersion = "v0.1-en"
-	normalizerVersion    = "v0.1"
-	tokenizerVersion     = "v0.1"
+	normalizerVersion = "v0.1"
+	tokenizerVersion  = "v0.1"
 	// oovPolicy is the v0.2 OOV policy after ADR-0009 amended ADR-0005: English
 	// KindWord dictionary misses are attempted through the deterministic rule
 	// fallback before being declined to SourceUnknown.
@@ -180,7 +182,7 @@ func (e *Engine) Process(input string) (Result, error) {
 		FeatureStream: fs,
 		SchemaVersion: schemaVersion,
 		Metadata: ResultMetadata{
-			GofonixVersion:       gofonixVersion,
+			GofonixVersion:       ReleaseVersion,
 			FeatureSchemaVersion: featureSchemaVersion,
 			NormalizerVersion:    normalizerVersion,
 			TokenizerVersion:     tokenizerVersion,

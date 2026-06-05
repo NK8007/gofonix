@@ -138,7 +138,7 @@ func TestMetadata(t *testing.T) {
 		t.Errorf("Result.SchemaVersion = %q, want %q", res.SchemaVersion, "gofonix-result-v0.1")
 	}
 	checks := map[string]struct{ got, want string }{
-		"GofonixVersion":       {md.GofonixVersion, "v0.1.0"},
+		"GofonixVersion":       {md.GofonixVersion, "v0.3.1-alpha"},
 		"FeatureSchemaVersion": {md.FeatureSchemaVersion, "v0.1-en"},
 		"NormalizerVersion":    {md.NormalizerVersion, "v0.1"},
 		"TokenizerVersion":     {md.TokenizerVersion, "v0.1"},

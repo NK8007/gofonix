@@ -1,4 +1,4 @@
-// gofonix-cli is the v0.3 command-line entry point for the Gofonix G2P engine.
+// gofonix-cli is the v0.3.1 command-line entry point for the Gofonix G2P engine.
 //
 // Scope (Phase 3 / Slice 3):
 //   - stdlib-only (flag, encoding/json, io, os, fmt, strings).
@@ -27,21 +27,20 @@ import (
 	"github.com/NK8007/gofonix/pkg/phoneme"
 )
 
-// cliVersion identifies the CLI surface independently of the engine version.
-// The engine's GofonixVersion (gofonixVersion in pkg/g2p) is reported
-// separately so a user can tell which library a CLI build is linked against.
-const cliVersion = "v0.3.0-alpha"
+// cliVersion identifies the CLI build. It tracks the Gofonix release version
+// (g2p.ReleaseVersion) so the CLI banner, the engine's reported GofonixVersion,
+// and the module tag all stay in lockstep. There is intentionally no separate
+// hard-coded engine version constant here — the single source of truth lives in
+// pkg/g2p/version.go.
+const cliVersion = g2p.ReleaseVersion
 
-// resultSchemaVersion mirrors the schemaVersion constant pinned in
-// pkg/g2p/engine.go. It is duplicated here ONLY so --version can print it
-// without constructing an engine; if the engine constant drifts a test will
-// catch it (see TestVersionContainsSchemaVersion in main_test.go).
+// resultSchemaVersion mirrors the (unexported) schemaVersion constant pinned in
+// pkg/g2p/version.go. It is duplicated here ONLY so --version can print the
+// frozen result-record schema version without constructing an engine. Unlike
+// the former engineGofonixVersion duplicate, this is the result-record schema
+// contract ("gofonix-result-v0.1"), which is deliberately independent of the
+// release version and must NOT track it. TestCLIVersion asserts the value.
 const resultSchemaVersion = "gofonix-result-v0.1"
-
-// engineGofonixVersion mirrors the gofonixVersion constant pinned in
-// pkg/g2p/engine.go for the same reason as resultSchemaVersion. Tests assert
-// that the two stay in lockstep with the values surfaced via ResultMetadata.
-const engineGofonixVersion = "v0.1.0"
 
 // exitCode values are split out so the smoke-test harness can assert them
 // without relying on raw integer literals scattered through main.
@@ -84,7 +83,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		// Multi-line, newline-terminated version banner. Each line stands on
 		// its own so downstream shells can `grep` for any field.
 		fmt.Fprintf(stdout, "gofonix-cli %s\n", cliVersion)
-		fmt.Fprintf(stdout, "GofonixVersion: %s\n", engineGofonixVersion)
+		fmt.Fprintf(stdout, "GofonixVersion: %s\n", g2p.ReleaseVersion)
 		fmt.Fprintf(stdout, "SchemaVersion: %s\n", resultSchemaVersion)
 		return exitOK
 	}

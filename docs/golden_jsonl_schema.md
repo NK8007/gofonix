@@ -21,7 +21,7 @@ detail and must not leak into any serialized artifact.
 | Field                    | Type            | Description |
 |--------------------------|-----------------|-------------|
 | `schema_version`         | string          | Result-record schema version. Always `"gofonix-result-v0.1"` in v0.1. |
-| `gofonix_version`        | string          | Release version, e.g. `"v0.1.0"`. |
+| `gofonix_version`        | string          | Gofonix release/module version, e.g. `"v0.3.1-alpha"`. Distinct from `schema_version`, which pins the result-record format. |
 | `dictionary_id`          | string          | Dictionary identity, e.g. `"cmudict-mini-v0.1"` (ADR-0004). |
 | `dictionary_checksum`    | string          | Hex SHA-256 of the dictionary file used (ADR-0004). |
 | `feature_schema_version` | string          | Phonological feature schema version, e.g. `"v0.1-en"` (ADR-0008). |

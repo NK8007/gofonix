@@ -253,7 +253,7 @@ func TestConformanceMetadataStable(t *testing.T) {
 	if md.DictionaryChecksum != wantSum {
 		t.Errorf("DictionaryChecksum = %q, want %q", md.DictionaryChecksum, wantSum)
 	}
-	if md.GofonixVersion != "v0.1.0" {
-		t.Errorf("GofonixVersion = %q, want v0.1.0", md.GofonixVersion)
+	if md.GofonixVersion != "v0.3.1-alpha" {
+		t.Errorf("GofonixVersion = %q, want v0.3.1-alpha", md.GofonixVersion)
 	}
 }

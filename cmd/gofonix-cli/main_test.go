@@ -12,7 +12,8 @@ import (
 // TestCLIVersion exercises the --version banner. It must:
 //   - exit with code 0,
 //   - print the CLI version string,
-//   - mention the engine GofonixVersion "v0.1.0" (per the Slice 3 brief),
+//   - mention the engine GofonixVersion "v0.3.1-alpha" (the Gofonix release
+//     version surfaced via ResultMetadata.GofonixVersion),
 //   - mention the schema version "gofonix-result-v0.1".
 //
 // The exact line layout is left to main.go; the test only checks substrings
@@ -24,8 +25,8 @@ func TestCLIVersion(t *testing.T) {
 		t.Fatalf("--version exited with code %d (stderr=%q); want 0", code, stderr.String())
 	}
 	out := stdout.String()
-	if !strings.Contains(out, "v0.1.0") {
-		t.Fatalf("--version output does not contain engine version \"v0.1.0\":\n%s", out)
+	if !strings.Contains(out, "v0.3.1-alpha") {
+		t.Fatalf("--version output does not contain release version \"v0.3.1-alpha\":\n%s", out)
 	}
 	if !strings.Contains(out, "gofonix-result-v0.1") {
 		t.Fatalf("--version output does not contain schema version \"gofonix-result-v0.1\":\n%s", out)

@@ -53,7 +53,13 @@ Oracle results must not be reported as fair byte-by-byte compression results.
 
 `ModeCausal` is the fair predictive mode. A non-trivial causal implementation must compute the feature for each byte using only the decoded prefix before that byte.
 
-In the current implementation, `ModeCausal` is scaffold-only. It accepts input and returns a structurally valid result, but every `FeatureStream` entry is the zero mask. This keeps the API and leakage-test plumbing present while avoiding a false claim of causal phonological inference.
+In the current implementation, `ModeCausal` is scaffold-only. It accepts input and returns a structurally valid result, but performs no dictionary lookup and no rule fallback. At the token and pronunciation level this means:
+
+- every token's `Pronunciation.Source` is `SourceUnknown`;
+- every token's `Phonemes` and `Alignment` are empty, regardless of token kind — including word tokens that would resolve in `ModeBatch`/`ModeOracle`;
+- consequently every `FeatureStream` entry is the zero mask, since there are no resolved phonemes to project.
+
+This keeps the API and leakage-test plumbing present while avoiding a false claim of causal phonological inference.
 
 ## Future causal implementation contract
 

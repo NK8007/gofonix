@@ -46,7 +46,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [0.3.0-alpha] — 2026-06-03
 
 ### Added
-- **ADR-0010 — Full CMUdict Loading Policy.** Frozen Phase 3 contract for the
+- **ADR-0010 — Full CMUdict Loading Policy.** Frozen contract for the
   external full CMUdict v0.7b backend: opt-in via the `gofonix_full_dict`
   build tag, mandatory SHA-256 verification against a pinned digest, size
   band, and graceful degradation to the embedded mini-dict
@@ -77,16 +77,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   pre-releases reported `GofonixVersion = "v0.1.0"`; this was a metadata
   inconsistency, corrected in 0.3.1-alpha so the field carries the release
   version while `SchemaVersion` remains the frozen result-record version.)
-- Compliance files (`LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES`) are still
-  absent from the repository root. They must be added before any non-alpha
-  tag because the full-CMUdict opt-in places the user at the CMU/BSD license
-  boundary (ADR-0010, License / Provenance).
+- Compliance files (`LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES.md`) are present
+  at the repository root. They cover the CMU/BSD license boundary that the
+  full-CMUdict opt-in places the user at (ADR-0010).
 
 ## [0.2.0] — 2026-04-15
 
 ### Added
 - **ADR-0009 — Deterministic OOV Fallback (`fallback-en-v0.2`).** Frozen
-  Phase 2 contract for the deterministic English rule-based fallback that
+  contract for the deterministic English rule-based fallback that
   resolves `KindWord` tokens missed by the mini CMUdict.
 - **OOV policy.** `ResultMetadata.OOVPolicy` is now
   `"rule-fallback-then-unknown"` and `ResultMetadata.FallbackRulesVersion`
@@ -99,7 +98,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 - Amended ADR-0005 (OOV policy) per ADR-0009: from *unknown-only* to
   *rule-fallback-then-unknown* for English `KindWord` tokens. All other
-  Phase 1 ADRs (ADR-0001, ADR-0003, ADR-0004, ADR-0006, ADR-0007, ADR-0008)
+  prior ADRs (ADR-0001, ADR-0003, ADR-0004, ADR-0006, ADR-0007, ADR-0008)
   remain authoritative and unchanged.
 
 ## [0.1.0] — 2026-02-01
@@ -121,8 +120,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Golden corpus.** `internal/golden` plus the schema documented in
   `docs/golden_jsonl_schema.md`.
 - **Internal ARPAbet bridge.** `internal/lang/en/arpabet` — 39 symbols,
-  neutral IDs 1–39. ARPAbet strings never leak into the public API
-  (Principle 3).
+  neutral IDs 1–39. ARPAbet strings never leak into the public API.
 - **ADRs ADR-0001, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0007,
   ADR-0008** frozen for v0.1.
 

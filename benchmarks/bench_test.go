@@ -1,4 +1,4 @@
-// Package benchmarks_test holds Gofonix's regression benchmarks (Slice 5).
+// Package benchmarks_test holds Gofonix's regression benchmarks.
 //
 // These benchmarks measure throughput and allocation behavior of the public
 // g2p pipeline (and the internal dictionary lookup) over fixed fixtures. They

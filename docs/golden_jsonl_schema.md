@@ -1,7 +1,7 @@
 # Golden JSONL schema (`gofonix-result-v0.1`)
 
 This document defines the **golden record** format used by Gofonix's
-conformance and regression tests (Phase 1 / Slice 5). A golden file is a
+conformance and regression tests. A golden file is a
 [JSON Lines](https://jsonlines.org/) (`.jsonl`) file: one independent,
 self-describing JSON object per line, UTF-8 encoded, each line terminated by a
 single `\n`.
@@ -27,7 +27,7 @@ detail and must not leak into any serialized artifact.
 | `feature_schema_version` | string          | Phonological feature schema version, e.g. `"v0.1-en"` (ADR-0008). |
 | `normalizer_version`     | string          | Normalizer version (ADR-0006). |
 | `tokenizer_version`      | string          | Tokenizer version (ADR-0006). |
-| `oov_policy`             | string          | Out-of-vocabulary policy, e.g. `"unknown-only"` (ADR-0005). |
+| `oov_policy`             | string          | Out-of-vocabulary policy: `"rule-fallback-then-unknown"` when the English rule fallback is active, `"unknown-only"` otherwise (ADR-0005, amended by ADR-0009). |
 | `language`               | string          | Resolved language tag (`"en"` in v0.1). |
 | `mode`                   | string          | Analysis mode: `"batch"`, `"oracle"`, or `"causal"` (ADR-0003). |
 | `input`                  | string          | The exact input string passed to `Process`. |
@@ -48,8 +48,11 @@ A `Mask` is the JSON form of an opaque `phoneme.FeatureMask` — the two raw
 | `lo`  | uint64 (number)  | Low 64 feature bits. |
 | `hi`  | uint64 (number)  | High 64 bits. Reserved; always `0` under `v0.1-en` (ADR-0008). |
 
-- A **non-speech byte** (whitespace, punctuation, number, symbol, unknown, OOV)
-  is the **zero mask** `{ "lo": 0, "hi": 0 }`.
+- A **non-speech byte** (whitespace, punctuation, number, symbol, unknown) is
+  the **zero mask** `{ "lo": 0, "hi": 0 }`. So is any byte not covered by a
+  resolved word (including an OOV word the rule fallback declined).
+- An OOV word the rule fallback **resolves** (`source == "rule_fallback"`)
+  projects **non-zero** masks over its bytes, exactly like a dictionary hit.
 - The **boundary phoneme** (ID 0) mask `{ "lo": 4194304, "hi": 0 }` is **never**
   emitted into `feature_stream` in v0.1; non-speech is the zero mask instead
   (ADR-0007, ADR-0008).
@@ -84,7 +87,7 @@ The debug-only IPA rendering is deliberately **not** serialized.
 | `token`     | string             | Exact surface substring `input[span.start:span.end]`. |
 | `span`      | `Span`             | Original-byte range of the token. |
 | `kind`      | string             | One of `word`, `whitespace`, `punctuation`, `number`, `symbol`, `unknown`. |
-| `source`    | string             | Provenance: `dict`, `rule_fallback` (reserved, never emitted in v0.1), or `unknown`. |
+| `source`    | string             | Provenance: `dict` (dictionary hit), `rule_fallback` (an OOV word the English rule fallback resolved; ADR-0009), or `unknown` (a fallback-declined OOV word, any non-word token, or any token in `causal` mode). |
 | `variant`   | int                | Selected pronunciation variant; always `0` in v0.1 (ADR-0004). |
 | `phonemes`  | array of `Phoneme` | Phoneme sequence; empty when `source == "unknown"`. |
 | `alignment` | array of `Span`    | One byte span per phoneme via uniform byte distribution (ADR-0007); `len(alignment) == len(phonemes)`. Empty when `source == "unknown"`. |
@@ -96,8 +99,10 @@ ARPAbet is **not** required and **not** present in golden output.
 
 1. `len(feature_stream) == len(input)` (byte count, not rune count).
 2. Every token span is a byte range with `0 <= start <= end <= len(input)`.
-3. Non-speech / OOV tokens carry `source == "unknown"`, empty `phonemes`, empty
-   `alignment`, and project only the zero mask over their bytes.
+3. Tokens with `source == "unknown"` (non-word tokens and OOV words the
+   fallback declined) carry empty `phonemes`, empty `alignment`, and project
+   only the zero mask over their bytes. A `dict` or `rule_fallback` word carries
+   non-empty `phonemes`/`alignment` and projects its per-phoneme masks.
 4. `mode == "causal"` ⇒ all-zero `feature_stream` **and** every token is
    `source == "unknown"` with empty `phonemes`/`alignment`.
 5. The boundary mask `{lo:4194304}` never appears in `feature_stream`.

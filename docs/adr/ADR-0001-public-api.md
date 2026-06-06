@@ -93,16 +93,18 @@ type ResultMetadata struct {
 }
 ```
 
-The semantics are:
+The `ResultMetadata` field semantics are:
 
 - `GofonixVersion`: the Gofonix release/module version, for example `v0.3.1-alpha`;
-- `SchemaVersion`: the result-record schema version, for example `gofonix-result-v0.1`;
 - `FeatureSchemaVersion`: the phonological feature schema version, for example `v0.1-en`;
-- `DictionaryID` and `DictionaryChecksum`: the dictionary identity and checksum actually used;
+- `NormalizerVersion` and `TokenizerVersion`: the normalizer and tokenizer versions (ADR-0006);
 - `OOVPolicy` and `FallbackRulesVersion`: the active OOV handling policy and fallback rule version;
+- `DictionaryID` and `DictionaryChecksum`: the dictionary identity and checksum actually used;
 - `FullDictAvailable`: whether the optional full-dictionary backend was available for this run.
 
-`GofonixVersion` and `SchemaVersion` are intentionally separate. A patch release may change metadata or implementation details without changing the result-record schema.
+The result-record schema version is **not** part of `ResultMetadata`. It lives on the top-level `Result` as the `SchemaVersion` field (for example `gofonix-result-v0.1`); see the Go API sketch below.
+
+`Result.SchemaVersion` and `ResultMetadata.GofonixVersion` are intentionally separate. A patch release may change `GofonixVersion`, other metadata, or implementation details without changing the result-record schema version.
 
 ### Thread safety
 

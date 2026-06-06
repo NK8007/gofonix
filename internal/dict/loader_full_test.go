@@ -11,7 +11,7 @@ import (
 // default build (no `-tags gofonix_full_dict`) LoadFull returns
 // ErrFullDictNotBuilt immediately — without touching the filesystem and
 // without panicking — so the engine's graceful-degradation path is reachable
-// (ADR-0010, Fallback Policy: "build tag absent" is silent).
+// (ADR-0010: "build tag absent" is silent).
 //
 // In a tagged build the stub is replaced by the real loader, which will
 // return a different sentinel (path resolution / size / checksum). The test
@@ -21,7 +21,7 @@ import (
 func TestLoadFull_DefaultBuild_ReturnsErrFullDictNotBuilt(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			t.Fatalf("LoadFull(\"\") panicked: %v (must never panic per ADR-0010, Fallback Policy)", r)
+			t.Fatalf("LoadFull(\"\") panicked: %v (must never panic per ADR-0010)", r)
 		}
 	}()
 
@@ -35,7 +35,7 @@ func TestLoadFull_DefaultBuild_ReturnsErrFullDictNotBuilt(t *testing.T) {
 }
 
 // TestLoadFull_EmptyOverride_NeverPanics is the explicit "the system does not
-// panic" assertion required by the Phase 3 / Slice 2 brief. It calls LoadFull
+// panic" assertion required by the no-panic contract. It calls LoadFull
 // with an empty override (the default resolution path) inside a recover()
 // scope and fails if any code along the path panics, regardless of which
 // sentinel is ultimately returned.
@@ -79,7 +79,7 @@ func TestLoadFull_NonexistentOverride_NeverPanics(t *testing.T) {
 
 // TestFullDictFallbackReason_ClosedEnum asserts that every sentinel error
 // from loader_full_errors.go maps to a non-empty, closed reason string
-// (ADR-0010, Fallback Policy). A nil error maps to the empty string. An
+// (ADR-0010). A nil error maps to the empty string. An
 // unrecognised error maps to "unexpected error".
 func TestFullDictFallbackReason_ClosedEnum(t *testing.T) {
 	cases := []struct {
@@ -107,10 +107,10 @@ func TestFullDictFallbackReason_ClosedEnum(t *testing.T) {
 }
 
 // TestFullID_Frozen pins the FullID constant to the exact value required by
-// ADR-0010 (Decision §5). Changing this value requires bumping the ADR and
+// ADR-0010. Changing this value requires bumping the ADR and
 // the frozen SHA-256 digest in lockstep.
 func TestFullID_Frozen(t *testing.T) {
 	if got, want := FullID, "cmudict-full-v0.7b"; got != want {
-		t.Fatalf("FullID = %q, want %q (ADR-0010 Decision §5 freezes this identifier)", got, want)
+		t.Fatalf("FullID = %q, want %q (ADR-0010 freezes this identifier)", got, want)
 	}
 }

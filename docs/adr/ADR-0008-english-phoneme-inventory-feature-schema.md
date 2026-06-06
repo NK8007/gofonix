@@ -49,12 +49,12 @@ ARPAbet remains internal. Neutral phoneme IDs are the public identity.
 | F | 14 | consonant | labiodental fricative |
 | G | 15 | consonant | velar stop |
 | HH | 16 | consonant | glottal fricative |
-| IH | 17 | vowel | high front lax vowel |
+| M | 17 | consonant | bilabial nasal |
 | IY | 18 | vowel | high front tense vowel |
 | JH | 19 | consonant | affricate |
 | K | 20 | consonant | velar stop |
 | L | 21 | consonant | lateral approximant |
-| M | 22 | consonant | bilabial nasal |
+| IH | 22 | vowel | high front lax vowel |
 | N | 23 | consonant | alveolar nasal |
 | NG | 24 | consonant | velar nasal |
 | OW | 25 | vowel | rounded diphthong |
@@ -116,25 +116,25 @@ The table below lists the low 64-bit word for each phoneme mask. The high word i
 | 1 | AA | 0, 14, 16, 21 | 2179073 |
 | 2 | AE | 0, 14, 15, 21 | 2146305 |
 | 3 | AH | 0, 13, 21 | 2105345 |
-| 4 | AO | 0, 14, 16, 17, 21 | 2310145 |
+| 4 | AO | 0, 2, 14, 21 | 2113541 |
 | 5 | AW | 0, 14, 16, 19, 21 | 2703361 |
 | 6 | AY | 0, 14, 15, 19, 21 | 2670593 |
 | 7 | B | 0, 2, 7 | 133 |
 | 8 | CH | 4, 9 | 528 |
-| 9 | D | 0, 2, 8 | 261 |
+| 9 | D | 0, 3 | 9 |
 | 10 | DH | 0, 3, 8 | 265 |
 | 11 | EH | 0, 13, 15, 21 | 2138113 |
 | 12 | ER | 0, 13, 20, 21 | 3153921 |
 | 13 | EY | 0, 13, 15, 18, 19, 21 | 2924545 |
 | 14 | F | 3, 7 | 136 |
-| 15 | G | 0, 2, 10 | 1029 |
+| 15 | G | 0, 2 | 5 |
 | 16 | HH | 3, 11 | 2056 |
-| 17 | IH | 0, 12, 15, 21 | 2134017 |
+| 17 | M | 0, 1, 7 | 131 |
 | 18 | IY | 0, 12, 15, 18, 21 | 2396161 |
 | 19 | JH | 0, 4, 9 | 529 |
 | 20 | K | 2, 10 | 1028 |
 | 21 | L | 0, 5, 6, 8 | 353 |
-| 22 | M | 0, 1, 7 | 131 |
+| 22 | IH | 0, 13, 21 | 2105345 |
 | 23 | N | 0, 1, 8 | 259 |
 | 24 | NG | 0, 1, 10 | 1027 |
 | 25 | OW | 0, 13, 16, 17, 19, 21 | 2826241 |
@@ -199,6 +199,6 @@ Rejected for the current public model. A single neutral ID namespace is simpler 
 
 - Golden records can pin exact mask values.
 - CLI JSON and golden JSONL can expose feature masks as `{lo,hi}`.
-- OW and OY share the same feature mask in this schema, but remain distinct phoneme IDs.
+- Several phonemes share an identical feature mask in this compact schema while remaining distinct phoneme IDs: OW (25) and OY (26) both `2826241`; AH (3) and IH (22) both `2105345`; S (29) and TH (32) both `264`. Distinctness is preserved by phoneme ID, not by mask.
 - The schema leaves substantial reserved capacity for future languages and feature refinements.
 

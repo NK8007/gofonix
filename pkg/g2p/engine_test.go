@@ -93,10 +93,9 @@ func TestCausalModeZeroMasks(t *testing.T) {
 	}
 }
 
-// TestTokenInvariants pins the Slice-3-invariant subset that survives the move
-// from Slice 1's all-SourceUnknown world: every token's surface matches its
-// byte span, every Variant is 0, and Alignment stays empty (Slice 4 owns
-// alignment). Pronunciation Source now depends on dictionary membership, so it
+// TestTokenInvariants pins the invariant subset: every token's surface matches
+// its byte span, every Variant is 0, and len(Alignment) == len(Phonemes).
+// Pronunciation Source now depends on dictionary membership, so it
 // is NOT asserted here (see TestDictHitPronunciation / TestOOVUnknown).
 func TestTokenInvariants(t *testing.T) {
 	e, err := New(Options{})
@@ -111,7 +110,7 @@ func TestTokenInvariants(t *testing.T) {
 		t.Fatal("expected tokens, got none")
 	}
 	for i, tr := range res.Tokens {
-		// Slice 4: len(Alignment) == len(Phonemes) for every token.
+		// len(Alignment) == len(Phonemes) for every token.
 		if len(tr.Pronunciation.Alignment) != len(tr.Pronunciation.Phonemes) {
 			t.Errorf("token %d (%q): %d alignment spans, want %d (== #phonemes)",
 				i, tr.Token, len(tr.Pronunciation.Alignment), len(tr.Pronunciation.Phonemes))
@@ -142,12 +141,12 @@ func TestMetadata(t *testing.T) {
 		"FeatureSchemaVersion": {md.FeatureSchemaVersion, "v0.1-en"},
 		"NormalizerVersion":    {md.NormalizerVersion, "v0.1"},
 		"TokenizerVersion":     {md.TokenizerVersion, "v0.1"},
-		// ADR-0009 (Phase 2 / Slice 3) amends ADR-0005: the English OOV policy is
+		// ADR-0009 amends ADR-0005: the English OOV policy is
 		// now rule-fallback-then-unknown and the active fallback rule-set version
 		// is surfaced in metadata.
 		"OOVPolicy":            {md.OOVPolicy, "rule-fallback-then-unknown"},
 		"FallbackRulesVersion": {md.FallbackRulesVersion, "fallback-en-v0.2"},
-		// Slice 2: the embedded mini CMUdict is now loaded and recorded.
+		// The embedded mini CMUdict is loaded and recorded.
 		"DictionaryID": {md.DictionaryID, "cmudict-mini-v0.1"},
 	}
 	for name, c := range checks {
@@ -191,7 +190,7 @@ func TestConcurrentProcess(t *testing.T) {
 	wg.Wait()
 }
 
-// TestEngineMetadata verifies Slice 2 dictionary provenance: Process records the
+// TestEngineMetadata verifies dictionary provenance: Process records the
 // embedded mini CMUdict ID and a non-empty, stable SHA-256 checksum (ADR-0004).
 func TestEngineMetadata(t *testing.T) {
 	e, err := New(Options{})
@@ -218,7 +217,7 @@ func TestEngineMetadata(t *testing.T) {
 
 // TestFeatureStreamLengthInvariant confirms the FeatureStream always has exactly
 // len(input) entries even with a mix of dict words, OOV, punctuation, and
-// numbers (ADR-0007). Slice 4 projects masks for dict words; the length
+// numbers (ADR-0007). Projection emits masks for dict words; the length
 // invariant must still hold.
 func TestFeatureStreamLengthInvariant(t *testing.T) {
 	e, err := New(Options{})
@@ -235,7 +234,7 @@ func TestFeatureStreamLengthInvariant(t *testing.T) {
 	}
 }
 
-// --- Slice 3 tests (ARPAbet mapping, dictionary integration) ---
+// --- ARPAbet mapping, dictionary integration tests ---
 
 // phonemeIDs is a small test helper extracting neutral IDs from a phoneme slice.
 func phonemeIDs(ps []phoneme.Phoneme) []int {
@@ -259,8 +258,8 @@ func equalInts(a, b []int) bool {
 }
 
 // TestDictHitPronunciation pins the canonical dictionary-hit path: "cat" maps to
-// neutral phoneme IDs [K=20, AE=2, T=31] with Source SourceDict and an empty
-// Alignment (per-phoneme alignment is Slice 4).
+// neutral phoneme IDs [K=20, AE=2, T=31] with Source SourceDict and a
+// per-phoneme Alignment.
 func TestDictHitPronunciation(t *testing.T) {
 	e, err := New(Options{})
 	if err != nil {
@@ -282,7 +281,7 @@ func TestDictHitPronunciation(t *testing.T) {
 	if !equalInts(got, want) {
 		t.Errorf("phoneme IDs = %v, want %v", got, want)
 	}
-	// Slice 4: "cat" (3 bytes, 3 phonemes) aligns to [0,1) [1,2) [2,3).
+	// "cat" (3 bytes, 3 phonemes) aligns to [0,1) [1,2) [2,3).
 	wantAlign := []ByteSpan{{0, 1}, {1, 2}, {2, 3}}
 	if !reflect.DeepEqual(pr.Alignment, wantAlign) {
 		t.Errorf("Alignment = %v, want %v", pr.Alignment, wantAlign)
@@ -292,7 +291,7 @@ func TestDictHitPronunciation(t *testing.T) {
 	}
 }
 
-// TestDictHitFeatureStream confirms that in Slice 4 a dictionary hit projects
+// TestDictHitFeatureStream confirms that a dictionary hit projects
 // each phoneme's v0.1-en FeatureMask over its alignment span: "cat" yields a
 // 3-byte FeatureStream of [K, AE, T] masks.
 func TestDictHitFeatureStream(t *testing.T) {
@@ -438,7 +437,7 @@ func TestOracleModeDictHit(t *testing.T) {
 	}
 }
 
-// TestARPAbetNotInPublicAPI guards Principle 3: no public g2p type exposes a raw
+// TestARPAbetNotInPublicAPI guards that ARPAbet stays internal: no public g2p type exposes a raw
 // ARPAbet string field. We reflect over Result, TokenResult, and Pronunciation
 // and require that the only string-typed fields are the documented neutral
 // surfaces/versions — never a phoneme symbol carrier. The phoneme identity in

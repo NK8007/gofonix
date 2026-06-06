@@ -1,17 +1,17 @@
 //go:build gofonix_full_dict
 
 // Package-internal full-CMUdict loader, compiled in only when the binary is
-// built with `-tags gofonix_full_dict` (ADR-0010, Decision §2). The default
-// build path uses loader_full_stub.go instead, which returns ErrFullDictNotBuilt
-// immediately so the engine falls back to the embedded mini-dict.
+// built with `-tags gofonix_full_dict` (ADR-0010). The default build path uses
+// loader_full_stub.go instead, which returns ErrFullDictNotBuilt immediately so
+// the engine falls back to the embedded mini-dict.
 //
 // The loader reads exactly one local file. It performs:
-//   1. path resolution (GOFONIX_DICT_PATH → $HOME/.gofonix/cmudict.dict);
+//   1. path resolution (Options.DictPath → GOFONIX_DICT_PATH → $HOME/.gofonix/cmudict.dict);
 //   2. stat / regular-file check;
-//   3. a size sanity band [1 MiB, 16 MiB] (ADR-0010, Loading Pipeline §3);
-//   4. a streaming SHA-256 vs FullExpectedSHA256 (ADR-0010, Checksum Policy);
+//   3. a size sanity band [1 MiB, 16 MiB] (ADR-0010);
+//   4. a streaming SHA-256 vs FullExpectedSHA256 (ADR-0010);
 //   5. a parse via the existing Load(), which also runs in the mini path;
-//   6. a "zero usable entries" rejection (ADR-0010, Loading Pipeline §5).
+//   6. a "zero usable entries" rejection (ADR-0010).
 //
 // Every step that declines returns one of the sentinel errors declared in
 // loader_full_errors.go. The loader NEVER panics, NEVER touches the network,
@@ -31,7 +31,7 @@ import (
 
 const (
 	// fullDictMinSize and fullDictMaxSize bound the on-disk size of the full
-	// CMUdict file (ADR-0010, Loading Pipeline §3). CMUdict v0.7b is ~3.5 MiB
+	// CMUdict file (ADR-0010). CMUdict v0.7b is ~3.5 MiB
 	// in canonical form; the band catches obvious mistakes (empty file,
 	// misrouted log, multi-gigabyte misconfiguration) without pretending to
 	// be a security boundary. The SHA-256 check is the real authority.
@@ -39,11 +39,11 @@ const (
 	fullDictMaxSize int64 = 16 << 20 // 16 MiB
 
 	// fullDictDefaultRelPath is the default location under $HOME for the full
-	// CMUdict file when GOFONIX_DICT_PATH is unset (ADR-0010, Decision §3).
+	// CMUdict file when GOFONIX_DICT_PATH is unset (ADR-0010).
 	fullDictDefaultRelPath = ".gofonix/cmudict.dict"
 
 	// fullDictPathEnv is the environment variable that, when set and
-	// non-empty, overrides the default path (ADR-0010, Decision §3).
+	// non-empty, overrides the default path (ADR-0010).
 	fullDictPathEnv = "GOFONIX_DICT_PATH"
 )
 
@@ -51,9 +51,9 @@ const (
 // immutable Dict tagged with FullID (ADR-0010). It is invoked once at engine
 // construction time and is never retried.
 //
-// The override argument lets callers (notably the G2P engine and tests) pin
-// a specific path; an empty override triggers the documented resolution
-// order: GOFONIX_DICT_PATH → $HOME/.gofonix/cmudict.dict.
+// The override argument carries Options.DictPath: callers (notably the G2P
+// engine and tests) may pin a specific path. An empty override triggers the
+// documented resolution order: GOFONIX_DICT_PATH → $HOME/.gofonix/cmudict.dict.
 //
 // On any failure path LoadFull returns a sentinel error from
 // loader_full_errors.go (wrapped where useful via fmt.Errorf("%w: …", …)),
@@ -88,7 +88,7 @@ func LoadFull(override string) (*Dict, error) {
 
 	d, err := Load(data)
 	if err != nil {
-		// Load is contractually non-erroring in Slice 2, but the signature
+		// Load is contractually non-erroring today, but the signature
 		// reserves an error return for forward compatibility (see dict.go).
 		return nil, fmt.Errorf("%w: %s: %v", ErrFullDictEmptyAfterParse, path, err)
 	}
@@ -98,10 +98,9 @@ func LoadFull(override string) (*Dict, error) {
 	return d, nil
 }
 
-// resolveFullDictPath implements the path-resolution order from ADR-0010
-// (Decision §3, Loading Pipeline §1):
+// resolveFullDictPath implements the path-resolution order from ADR-0010:
 //
-//  1. an explicit non-empty override (callers may pin a path directly);
+//  1. an explicit non-empty override (Options.DictPath; callers may pin a path);
 //  2. GOFONIX_DICT_PATH if set and non-empty;
 //  3. $HOME/.gofonix/cmudict.dict if $HOME is set and non-empty;
 //  4. otherwise return ErrFullDictPathUnresolved.
@@ -126,8 +125,7 @@ func resolveFullDictPath(override string) (string, error) {
 // readAndHashFile streams the file at path through SHA-256 while accumulating
 // its bytes for the parser. We compute the digest over the exact file bytes —
 // no LF/CRLF normalisation, no whitespace trim, no comment stripping — to
-// preserve the byte-equality property of the checksum (ADR-0010, Checksum
-// Policy).
+// preserve the byte-equality property of the checksum (ADR-0010).
 //
 // The function uses io.TeeReader so a single pass produces both the digest
 // and the payload, avoiding a second open or a second read of the file.

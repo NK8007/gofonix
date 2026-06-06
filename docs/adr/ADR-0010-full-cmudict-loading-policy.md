@@ -54,11 +54,12 @@ The embed variant is for controlled distribution scenarios. It must not require 
 
 When `gofonix_full_dict` is enabled and the non-embedded loader is used, the loader resolves the dictionary path in this order:
 
-1. if `GOFONIX_DICT_PATH` is set and non-empty, use that path;
-2. otherwise, if `$HOME` is set, use `$HOME/.gofonix/cmudict.dict`;
-3. otherwise, no path is resolved and the loader falls back to the mini dictionary.
+1. if `Options.DictPath` is set and non-empty, use that path (an explicit per-engine override);
+2. otherwise, if `GOFONIX_DICT_PATH` is set and non-empty, use that path;
+3. otherwise, if `$HOME` is set, use `$HOME/.gofonix/cmudict.dict`;
+4. otherwise, no path is resolved and the loader falls back to the mini dictionary.
 
-The loader reads local files only. It never downloads the dictionary.
+`Options.DictPath` is honoured only in tagged builds; in default builds the full loader is a stub and the field is ignored. The loader reads local files only. It never downloads the dictionary.
 
 ## Verification policy
 

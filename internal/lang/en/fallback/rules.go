@@ -7,14 +7,14 @@
 // access, and no subprocess/CGO. Same input -> identical output, always.
 //
 // The right-hand-side symbols are internal ARPAbet-like strings drawn from the
-// 39-symbol v0.1-en inventory. They are intended to be handed to the existing
+// 39-symbol v0.1-en inventory. They are handed to the existing
 // internal/lang/en/arpabet bridge; this package never exposes ARPAbet through
 // the public pkg/g2p API. This package carries no API stability guarantee.
 //
-// Scope note (ADR-0009, Phase 2 / Slice 2): this slice provides only the rule
-// table, normalization, and the longest-match matcher. It does NOT integrate
-// with pkg/g2p Process(), does NOT emit SourceRuleFallback, and does NOT add
-// ResultMetadata.FallbackRulesVersion. Those land in a later slice.
+// This package provides the rule table, normalization, and the longest-match
+// matcher. pkg/g2p Process() invokes it for OOV KindWord tokens in
+// ModeBatch/ModeOracle: a resolved match is emitted as SourceRuleFallback and
+// reported via ResultMetadata.FallbackRulesVersion (ADR-0009).
 package fallback
 
 // RulesVersion identifies the frozen fallback rule set defined by ADR-0009.

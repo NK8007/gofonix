@@ -46,7 +46,7 @@ gofonix/
 │   ├── lang/en/                   English-specific resolution layer.
 │   │   ├── arpabet/               39-symbol ARPAbet → neutral phoneme ID
 │   │   │                          bridge. Strings never leak to the public
-│   │   │                          API (Principle 3).
+│   │   │                          API (ADR-0008).
 │   │   └── fallback/              Deterministic rule-based OOV fallback
 │   │                              (fallback-en-v0.2; ADR-0009). Activates
 │   │                              on KindWord tokens missed by the
@@ -112,7 +112,7 @@ degrades silently to the embedded mini-dict and reports
 ## ADR Index
 
 The ADRs are the authoritative source for every frozen contract. The full
-set lives in [`docs/adr/`](adr/); the two Phase-3-relevant records are
+set lives in [`docs/adr/`](adr/); the two most recent records are
 summarised below.
 
 ### ADR-0009 — Deterministic OOV Fallback for English v0.2
@@ -124,15 +124,16 @@ fallback supplies ARPAbet symbols that are mapped through
 `internal/lang/en/arpabet` to neutral phoneme IDs and surface as
 `SourceRuleFallback` (never `SourceDict`). Amends ADR-0005, switching the
 English OOV policy from *unknown-only* to *rule-fallback-then-unknown*; all
-other Phase 1 ADRs remain unchanged. Tokens the fallback declines, and every
+other prior ADRs remain unchanged. Tokens the fallback declines, and every
 non-word token, stay `SourceUnknown`.
 
 ### ADR-0010 — Full CMUdict Loading Policy for English v0.3
 [`docs/adr/ADR-0010-full-cmudict-loading-policy.md`](adr/ADR-0010-full-cmudict-loading-policy.md)
 
-Freezes the opt-in full-CMUdict-v0.7b backend introduced in Phase 3. The
+Freezes the opt-in full-CMUdict-v0.7b backend. The
 loader is gated behind the `gofonix_full_dict` build tag, resolves a path
-(explicit `Options.DictPath` first), validates a size band and an SHA-256
+(explicit `Options.DictPath` first, then `GOFONIX_DICT_PATH`, then the
+`$HOME/.gofonix/cmudict.dict` default), validates a size band and an SHA-256
 digest against a pinned constant, parses the file, and only then takes over
 from the embedded mini-dict. Every failure mode (missing file, wrong size,
 wrong checksum, parse error, or default build) results in silent, graceful

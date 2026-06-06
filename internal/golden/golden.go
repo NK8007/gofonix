@@ -1,6 +1,6 @@
 // Package golden converts a g2p.Result into a stable, JSON-serializable golden
 // record and back, and reads/writes newline-delimited JSON (JSONL) golden
-// fixtures used by the conformance and regression tests (Slice 5).
+// fixtures used by the conformance and regression tests.
 //
 // This is an internal package and carries no API stability guarantee. The
 // golden record schema it (de)serializes is documented in

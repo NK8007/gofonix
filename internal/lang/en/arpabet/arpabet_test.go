@@ -81,9 +81,8 @@ func TestFeatureMaskDH(t *testing.T) { assertLo(t, 10, 265) }
 func TestFeatureMaskEY(t *testing.T) { assertLo(t, 13, 2924545) }
 func TestFeatureMaskW(t *testing.T)  { assertLo(t, 36, 1185) }
 
-// The following pin the Slice 4.1 ADR-0008 corrections so the previously wrong
-// values (AO=2310145, D=261, G=1029) and the IH/M ID misassignment can never
-// regress.
+// The following pin the ADR-0008 symbol-ID assignments so the values
+// (AO, D, G) and the IH/M ID assignment can never regress.
 func TestFeatureMaskAO(t *testing.T) { assertLo(t, 4, 2113541) }
 func TestFeatureMaskD(t *testing.T)  { assertLo(t, 9, 9) }
 func TestFeatureMaskG(t *testing.T)  { assertLo(t, 15, 5) }
@@ -100,7 +99,7 @@ func TestFeatureMaskIH(t *testing.T) {
 // TestFeatureMaskM pins M at ID 17 (lo=131) after the IH/M swap.
 func TestFeatureMaskM(t *testing.T) { assertLo(t, 17, 131) }
 
-// TestMapSymbolIHM pins the corrected symbol->ID assignment: IH->22, M->17.
+// TestMapSymbolIHM pins the symbol->ID assignment: IH->22, M->17.
 func TestMapSymbolIHM(t *testing.T) {
 	cases := map[string]int{
 		"IH":  22,
@@ -120,7 +119,7 @@ func TestMapSymbolIHM(t *testing.T) {
 	}
 }
 
-// TestMapSequenceDOG pins DOG -> D AO G -> IDs [9, 4, 15] (Slice 4.1 fix).
+// TestMapSequenceDOG pins DOG -> D AO G -> IDs [9, 4, 15] (ADR-0008).
 func TestMapSequenceDOG(t *testing.T) {
 	got, ok := MapSequence([]string{"D", "AO1", "G"})
 	if !ok {
@@ -137,7 +136,7 @@ func TestMapSequenceDOG(t *testing.T) {
 	}
 }
 
-// TestMapSequenceIT pins IT -> IH T -> IDs [22, 31] (Slice 4.1 IH fix).
+// TestMapSequenceIT pins IT -> IH T -> IDs [22, 31] (ADR-0008).
 func TestMapSequenceIT(t *testing.T) {
 	got, ok := MapSequence([]string{"IH1", "T"})
 	if !ok {

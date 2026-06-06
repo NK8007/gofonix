@@ -1,18 +1,18 @@
 // gofonix-cli is the v0.3.1 command-line entry point for the Gofonix G2P engine.
 //
-// Scope (Phase 3 / Slice 3):
+// Scope:
 //   - stdlib-only (flag, encoding/json, io, os, fmt, strings).
 //   - Reads input from --input or, when --input is empty, from os.Stdin.
 //   - Constructs a g2p.Engine via the public pkg/g2p API ONLY.
 //   - Emits either an indented JSON Result or a tab-separated text summary.
-//   - Honours the v0.3 --dict-path override (ADR-0010 Decision §3); the engine
-//     falls back gracefully to the embedded mini-dict whenever the full
-//     CMUdict cannot be loaded.
+//   - Honours the --dict-path override (ADR-0010, dictionary path resolution);
+//     the engine falls back gracefully to the embedded mini-dict whenever the
+//     full CMUdict cannot be loaded.
 //
-// Explicitly out of scope (Slice 3 brief): cobra/viper or any third-party
-// flag parser, streaming of large inputs, Polish or any non-English module,
-// compression / bits-per-byte reporting. The CLI is a thin wrapper over the
-// public engine and adds no domain logic.
+// Out of scope: cobra/viper or any third-party flag parser, streaming of large
+// inputs, Polish or any non-English module, compression / bits-per-byte
+// reporting. The CLI is a thin wrapper over the public engine and adds no
+// domain logic.
 package main
 
 import (
@@ -138,8 +138,8 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 }
 
 // parseMode maps the user-facing --mode string to a g2p.Mode. Only "batch"
-// and "causal" are exposed in the CLI (per the Slice 3 brief); "oracle" is a
-// library-internal analysis mode and is intentionally not surfaced here.
+// and "causal" are exposed in the CLI; "oracle" is a library-internal analysis
+// mode and is intentionally not surfaced here.
 //
 // The match is case-insensitive after trimming surrounding whitespace; this
 // is a one-line affordance for shells / Makefiles and does not alter the
@@ -157,8 +157,8 @@ func parseMode(s string) (g2p.Mode, bool) {
 
 // resolveInput returns the input text to process. When the --input flag is
 // non-empty, its value is used verbatim. When it is empty, the entire
-// contents of stdin are read into memory (the Slice 3 brief explicitly
-// defers streaming to a later phase).
+// contents of stdin are read into memory; streaming of large inputs is not
+// supported.
 func resolveInput(inputFlag string, stdin io.Reader) (string, error) {
 	if inputFlag != "" {
 		return inputFlag, nil

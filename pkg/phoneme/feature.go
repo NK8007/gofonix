@@ -4,5 +4,5 @@ package phoneme
 // Feature value corresponds to a single bit position within a FeatureMask.
 //
 // In v0.1-en the valid range is 0-22 (23 features); bits 23-127 are reserved.
-// Slice 1 defines the type only; the concrete schema table is Slice 2+.
+// The concrete schema table is the v0.1-en assignment defined in ADR-0008.
 type Feature int

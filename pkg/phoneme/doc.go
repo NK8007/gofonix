@@ -4,11 +4,11 @@
 // The package exposes the public identity of a phoneme (a neutral integer ID,
 // per ADR-0008) and an opaque phonological FeatureMask. ARPAbet and other
 // language-specific encodings never appear in this package; they live under
-// internal/ (ADR-0001, Principle 3). IPA strings on Phoneme are a debug
-// rendering only and carry no stable contract.
+// internal/ (ADR-0001, ADR-0008: ARPAbet stays internal). IPA strings on
+// Phoneme are a debug rendering only and carry no stable contract.
 //
-// In Slice 1 (Phase 1) the package provides only the public types and the
-// FeatureMask machinery. The concrete v0.1-en phoneme inventory and feature
-// schema table (ADR-0008) are referenced for constants and metadata only; the
-// projection of phonemes into feature masks is Slice 2+ work.
+// The package provides the public types and the FeatureMask machinery. The
+// concrete v0.1-en phoneme inventory and feature schema table are defined in
+// ADR-0008; phonemes are projected into feature masks by the internal English
+// ARPAbet bridge.
 package phoneme

@@ -61,4 +61,4 @@ See [`docs/architecture.md`](docs/architecture.md) for the module map and the AD
 
 ## License
 
-Licensed under the terms in [`LICENSE`](LICENSE) (file currently absent — see Compliance note in `CHANGELOG.md`). Third-party attributions, when added, will live in `NOTICE` / `THIRD_PARTY_NOTICES`.
+Licensed under the terms in [`LICENSE`](LICENSE) (Apache License 2.0). Third-party attributions live in [`NOTICE`](NOTICE) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

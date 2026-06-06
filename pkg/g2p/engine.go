@@ -42,18 +42,18 @@ type Engine struct {
 	// dict is the CMUdict loaded once in New. By default it is the embedded
 	// mini-dict (ADR-0004); under `-tags gofonix_full_dict` New attempts to
 	// load the full CMUdict v0.7b from disk and falls back to the mini-dict on
-	// any error (ADR-0010, Fallback Policy). Immutable after construction and
+	// any error (ADR-0010, fallback policy). Immutable after construction and
 	// safe for concurrent Lookup.
 	dict *dict.Dict
 	// dictID identifies the active dictionary backend for ResultMetadata
-	// (ADR-0010, Decision §5). It is one of exactly two values in v0.3:
+	// (ADR-0010). It is one of exactly two values in v0.3:
 	// dict.EmbeddedID ("cmudict-mini-v0.1") or dict.FullID ("cmudict-full-v0.7b").
 	dictID string
 	// dictChecksum is the SHA-256 hex digest of the active dictionary bytes,
 	// surfaced in ResultMetadata.DictionaryChecksum (ADR-0004, ADR-0010).
 	dictChecksum string
 	// fullDictAvailable is the programmatic signal exposed via
-	// ResultMetadata.FullDictAvailable (ADR-0010, Public API Impact §1):
+	// ResultMetadata.FullDictAvailable (ADR-0010, metadata):
 	// true iff the full CMUdict was loaded and verified successfully for this
 	// engine instance; false otherwise (default builds, any fallback path).
 	fullDictAvailable bool
@@ -97,7 +97,7 @@ func New(opts Options) (*Engine, error) {
 }
 
 // loadDictionary implements the v0.3 dictionary-selection policy (ADR-0010,
-// Decision §2–7 and Fallback Policy). It first attempts dict.LoadFull(path);
+// fallback policy). It first attempts dict.LoadFull(path);
 // on any error it logs a single structured WARN line (except for the silent
 // "build tag absent" default-build case) and loads the embedded mini-dict.
 //
@@ -112,7 +112,7 @@ func loadDictionary(pathOverride string) (*dict.Dict, string, string, bool) {
 	}
 	// Log every failure path EXCEPT the silent default-build case where the
 	// binary was compiled without `-tags gofonix_full_dict` (ADR-0010,
-	// Fallback Policy: "build tag absent" must not emit a warning, because
+	// fallback policy: "build tag absent" must not emit a warning, because
 	// that is the normal default user experience and warning spam is harmful).
 	if !errors.Is(err, dict.ErrFullDictNotBuilt) {
 		reason := dict.FullDictFallbackReason(err)
@@ -126,7 +126,7 @@ func loadDictionary(pathOverride string) (*dict.Dict, string, string, bool) {
 }
 
 // fullDictChecksumOf returns the SHA-256 hex digest pinned to FullID by
-// ADR-0010 (Checksum Policy). The frozen expected digest is the authoritative
+// ADR-0010 (verification policy). The frozen expected digest is the authoritative
 // identifier for the full-dict bytes; we surface it unchanged rather than
 // recomputing over the in-memory parsed structure (which would be a different,
 // less meaningful digest).
@@ -144,7 +144,7 @@ func fullDictChecksumOf(_ *dict.Dict) string {
 
 // Process tokenizes input and returns a Result (ADR-0001, ADR-0006, ADR-0007).
 //
-// Slice 4 behavior: for word tokens in ModeBatch/ModeOracle, the dictionary is
+// For word tokens in ModeBatch/ModeOracle, the dictionary is
 // consulted; a hit's RAW ARPAbet canonical pronunciation is stress-stripped and
 // mapped to neutral phoneme.Phoneme values via internal/lang/en/arpabet, the
 // token's Pronunciation carries Source SourceDict with those phonemes, AND a
@@ -198,13 +198,16 @@ func (e *Engine) Process(input string) (Result, error) {
 // buildTokenResults adapts internal tokenizer tokens into public TokenResults
 // and resolves each token's pronunciation (ADR-0004, ADR-0005, ADR-0008).
 //
-// Resolution policy (Slice 3):
+// Resolution policy:
 //   - ModeCausal: every token is SourceUnknown with an empty Pronunciation
 //     (the causal scaffold performs no dictionary lookup in v0.1; ADR-0003).
 //   - ModeBatch/ModeOracle word tokens: look up the lowercased surface in the
 //     dictionary. On a hit whose canonical RAW ARPAbet maps cleanly to neutral
-//     phonemes, emit SourceDict with those phonemes. On a miss or any mapping
-//     failure (an unknown ARPAbet symbol), fall back to SourceUnknown.
+//     phonemes, emit SourceDict with those phonemes. On a dictionary miss the
+//     deterministic English rule fallback is consulted (ADR-0009): a resolved
+//     match yields SourceRuleFallback, and a declined match yields
+//     SourceUnknown. A dictionary hit with unmappable ARPAbet is not a miss and
+//     stays SourceUnknown.
 //   - Non-word tokens (whitespace, punctuation, number, symbol, unknown) are
 //     always SourceUnknown.
 //
@@ -249,7 +252,7 @@ func emptyPronunciation() Pronunciation {
 	}
 }
 
-// resolvePronunciation resolves a single token's pronunciation per the Slice 4
+// resolvePronunciation resolves a single token's pronunciation per the
 // policy documented on buildTokenResults. span is the token's byte range, used
 // to compute the per-phoneme uniform byte alignment on a dictionary hit.
 func (e *Engine) resolvePronunciation(kind TokenKind, surface string, span ByteSpan) Pronunciation {

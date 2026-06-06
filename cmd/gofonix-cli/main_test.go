@@ -95,7 +95,7 @@ func TestCLIBasicJSON(t *testing.T) {
 		"FullDictAvailable",
 	} {
 		if _, ok := meta[key]; !ok {
-			t.Fatalf("CLI JSON Metadata missing required key %q (ADR-0010, Public API Impact); meta=%v", key, meta)
+			t.Fatalf("CLI JSON Metadata missing required key %q (ADR-0010, metadata); meta=%v", key, meta)
 		}
 	}
 

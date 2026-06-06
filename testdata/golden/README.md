@@ -12,8 +12,9 @@ package. The full record format is specified in
 | File             | Cases covered |
 |------------------|---------------|
 | `words.jsonl`    | Plain dictionary words in batch mode: `cat`, `a`, `the`, `dog`, `it`. Pins phoneme IDs and per-byte feature masks against ADR-0008 (e.g. `cat` → IDs 20/2/31, lo 1028/2146305/260). |
-| `atypical.jsonl` | Atypical surface forms: trailing punctuation (`cat.`), ASCII apostrophe (`don't`), curly apostrophe U+2019 (`it’s`), wrapping quotes (`'hello'`), single and double hyphen runs (`well-known`, `well--known`), an acronym (`NASA`), and a multi-phoneme word (`hello`). |
-| `oov.jsonl`      | Out-of-vocabulary words: `qwertyx` and `NASA`. Both are `source: unknown` with empty phonemes/alignment and an all-zero feature stream. |
+| `atypical.jsonl` | Atypical surface forms: trailing punctuation (`cat.`), ASCII apostrophe (`don't`, a `dict` hit), curly apostrophe U+2019 (`it’s`, a `unknown` non-word), wrapping quotes (`'hello'`), single and double hyphen runs (`well-known`, `well--known`), an acronym (`NASA`, resolved by the rule fallback to `source: rule_fallback`, IDs 23/2/29/2), and a multi-phoneme word (`hello`). |
+| `oov.jsonl`      | Out-of-vocabulary words in batch mode: `qwertyx` and `NASA`. Both are resolved by the deterministic English rule fallback (ADR-0009), so each carries `source: rule_fallback` with **non-empty** phonemes/alignment and a **non-zero** feature stream (`NASA` → IDs 23/2/29/2). |
+| `fallback.jsonl` | The rule-fallback corpus: OOV words the fallback resolves (`ship`, `thing`, `phone`, `xenon`, `qwerty` → `source: rule_fallback`), tokens the fallback declines (`MP3`, `H2O`, `3rd`, `21st`, `café`, `it’s` → `source: unknown`), a dictionary hit (`cat` → `dict`), a fallback word with trailing punctuation (`ship.`), and the same `qwerty` in **causal** mode (→ `unknown`, since causal performs no lookup). |
 | `nonword.jsonl`  | Non-word runs: numbers (`123`, `3.14`), mixed tokens (`3rd`, `MP3`), whitespace (`" "`), and punctuation (`.`). |
 | `causal.jsonl`   | The same kinds of input in **causal** mode. The scaffold performs no lookup/projection in v0.1 (ADR-0003): the feature stream is all-zero and every token is `source: unknown`. |
 
@@ -26,8 +27,9 @@ For each file the test:
    `.jsonl` line.
 3. Requires an **exact** `reflect.DeepEqual` match, line by line.
 4. Additionally re-checks the schema invariants (feature-stream length, byte
-   spans, zero masks for non-speech/OOV, all-zero causal stream, boundary mask
-   absence, contiguous dict-hit alignment).
+   spans, zero masks for non-speech and fallback-declined tokens, all-zero
+   causal stream, boundary mask absence, contiguous alignment for resolved
+   `dict`/`rule_fallback` words).
 
 A normal `go test` run **never** rewrites these files and **fails** on any
 mismatch.

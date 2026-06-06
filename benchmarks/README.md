@@ -1,6 +1,6 @@
 # Benchmarks
 
-Regression benchmarks for the Gofonix G2P pipeline (Phase 1 / Slice 5). They
+Regression benchmarks for the Gofonix G2P pipeline. They
 measure throughput and allocation behavior over fixed fixtures and exist purely
 to catch regressions over time.
 
@@ -8,7 +8,7 @@ These benchmarks deliberately:
 
 - set **no hard performance thresholds** (they never `Fail` on a slow run);
 - report **no bits-per-byte (bpb)** and **no compression ratio** — Gofonix v0.1
-  ships no compressor (that is out of scope for Phase 1);
+  ships no compressor (that is out of scope here);
 - call `b.ReportAllocs()` so allocation regressions are visible.
 
 ## Fixtures

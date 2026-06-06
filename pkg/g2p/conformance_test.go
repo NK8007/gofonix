@@ -18,7 +18,7 @@ import (
 // TestConformanceNoARPAbetLeakage asserts no public g2p type exposes RAW
 // ARPAbet. Pronunciations are carried as []phoneme.Phoneme (neutral IDs), and
 // no public struct may declare a field whose name suggests an ARPAbet carrier
-// (Principle 3, ADR-0002, ADR-0008).
+// (ARPAbet stays internal; ADR-0002, ADR-0008).
 func TestConformanceNoARPAbetLeakage(t *testing.T) {
 	prt := reflect.TypeOf(g2p.Pronunciation{})
 	pf, ok := prt.FieldByName("Phonemes")
@@ -57,7 +57,8 @@ func TestConformanceNoARPAbetLeakage(t *testing.T) {
 }
 
 // TestConformanceFeatureMaskNotUint64Alias asserts FeatureMask is an opaque
-// struct, NOT a uint64 (or any integer) alias (Principle 5, ADR-0002). A
+// struct, NOT a uint64 (or any integer) alias (the FeatureMask must be an
+// opaque struct, not a uint64 alias; ADR-0002). A
 // numeric alias would let callers do arithmetic/bit ops on a mask directly and
 // would break the opaque contract.
 func TestConformanceFeatureMaskNotUint64Alias(t *testing.T) {

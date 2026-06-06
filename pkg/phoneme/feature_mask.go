@@ -4,9 +4,10 @@ import "encoding/json"
 
 // FeatureMask is an opaque bitmask holding up to 128 phonological feature bits.
 //
-// It must NOT be a uint64 alias — it is a struct (Principle 5; ADR-0002). The
-// v0.1-en schema (ADR-0008) uses only bits 0-22, all of which live in the low
-// word; the high word is reserved for future schema versions.
+// It must NOT be a uint64 alias — it is a struct, so the mask stays opaque and
+// future-extensible (ADR-0002). The v0.1-en schema (ADR-0008) uses only bits
+// 0-22, all of which live in the low word; the high word is reserved for
+// future schema versions.
 type FeatureMask struct {
 	bits [2]uint64
 }

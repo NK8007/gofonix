@@ -1,4 +1,4 @@
-// Package arpabet is the internal English ARPAbet bridge (ADR-0008, Principle 3).
+// Package arpabet is the internal English ARPAbet bridge (ADR-0008; ARPAbet stays internal).
 //
 // ARPAbet lives ONLY here: this package maps stress-stripped CMUdict ARPAbet
 // symbols to neutral phoneme.Phoneme values (IDs 1-39 per the v0.1-en

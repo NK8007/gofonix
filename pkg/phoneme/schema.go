@@ -4,8 +4,8 @@ package phoneme
 // ADR-0008). Masks produced under different schema versions are not comparable
 // and must not be mixed in a single analysis.
 //
-// Slice 1 provides a minimal placeholder carrying only the version string. The
-// concrete bit-position table (ADR-0008, v0.1-en) is Slice 2+ work.
+// It carries only the version string; the concrete bit-position table is the
+// v0.1-en assignment defined in ADR-0008 (see the Feat* constants below).
 type FeatureSchema struct {
 	// Version is the schema version string, e.g. "v0.1-en".
 	Version string

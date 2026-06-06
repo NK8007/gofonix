@@ -1,8 +1,8 @@
 package g2p
 
 // Mode selects the information-availability semantics of a Process call
-// (ADR-0003). In v0.1 all three modes produce an all-zero FeatureStream in
-// Slice 1; ModeCausal is scaffold-only by design (ADR-0001, ADR-0003).
+// (ADR-0003). In v0.1 ModeCausal is scaffold-only by design and produces an
+// all-zero FeatureStream (ADR-0001, ADR-0003).
 type Mode int
 
 const (
@@ -27,11 +27,11 @@ type Options struct {
 	Mode Mode
 	// DictPath optionally overrides the full-CMUdict resolution path used by
 	// New when the binary is built with `-tags gofonix_full_dict` (ADR-0010,
-	// Decision §3). An empty value triggers the documented resolution order:
-	// GOFONIX_DICT_PATH, then $HOME/.gofonix/cmudict.dict. The field is
-	// honoured only in tagged builds; in default builds the full loader is a
-	// stub and DictPath is silently ignored as the engine falls back to the
-	// embedded mini-dict (ADR-0010, Fallback Policy: "build tag absent" path,
-	// no warning).
+	// dictionary path resolution). It is the first resolution step: a non-empty
+	// value is used directly, ahead of GOFONIX_DICT_PATH and the
+	// $HOME/.gofonix/cmudict.dict default. The field is honoured only in tagged
+	// builds; in default builds the full loader is a stub and DictPath is
+	// silently ignored as the engine falls back to the embedded mini-dict
+	// (ADR-0010, fallback policy: "build tag absent" path, no warning).
 	DictPath string
 }

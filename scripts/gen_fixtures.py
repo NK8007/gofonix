@@ -15,12 +15,12 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIX = os.path.join(HERE, "..", "testdata", "fixtures")
 
-# Original sentence templates about a (fictional) phonetic engine. Plain ASCII.
+# Original sentence templates about a fictional phonetic engine. Plain ASCII.
 ASCII_SENTENCES = [
     "The engine reads each input string one byte at a time and never assumes a fixed width.",
     "A tokenizer groups letters into words, keeps whitespace intact, and isolates punctuation.",
     "When a word is found in the dictionary, the system emits a neutral phoneme sequence.",
-    "Out of vocabulary words receive an empty pronunciation and contribute only zero masks.",
+    "Out of vocabulary words may use deterministic fallback rules before becoming unknown.",
     "Each phoneme carries a compact feature mask that records its phonological properties.",
     "The feature stream has exactly one entry per input byte, which keeps alignment simple.",
     "Numbers such as 42, 1024, and 3 are classified as numeric runs rather than words.",
@@ -35,7 +35,7 @@ ASCII_SENTENCES = [
     "Concurrency is safe because the engine holds no mutable state after construction.",
     "The parser skips comment lines, blank lines, and any record it cannot understand.",
     "Stress markers from the source notation are stripped before the phonemes are mapped.",
-    "Variants are reserved for a later phase, so the canonical pronunciation is selected.",
+    "Variant selection is deterministic, so the canonical pronunciation is selected.",
     "Performance is measured with benchmarks that report allocations but set no thresholds.",
     "Engineers can extend the inventory later without breaking the opaque mask contract.",
     "The cat sat on the mat while the dog watched it from across the quiet room.",
@@ -71,12 +71,12 @@ def build_ascii(target_bytes: int) -> str:
 # Unicode fixture: curly quotes U+2018/U+2019/U+201C/U+201D, em-dash U+2014,
 # en-dash U+2013, and accented Latin letters. Original prose.
 UNICODE_PARAGRAPHS = [
-    "The reviewer wrote, \u201cthis pipeline is well\u2013behaved\u201d \u2014 and she meant it sincerely.",
+    "The note said, \u201cthis pipeline is well\u2013behaved\u201d \u2014 and the result was reproducible.",
     "A na\u00efve approach would ignore the caf\u00e9 sign\u2019s accents, but our tokenizer keeps every byte.",
-    "He said it\u2019s \u2018obvious\u2019 once you see it; the r\u00e9sum\u00e9 of changes spanned 2018\u20132024.",
+    "The phrase is \u2018obvious\u2019 once the spans are visible; the r\u00e9sum\u00e9 of changes covered 2018\u20132024.",
     "The fa\u00e7ade of simplicity hides care: \u201cdon\u2019t\u201d and \u201cit\u2019s\u201d use a curly apostrophe here.",
-    "From na\u00efvet\u00e9 to expertise \u2014 a long road \u2013 the team kept the contract opaque and stable.",
-    "She quoted the motto \u2018measure twice\u2019 and added a wry, almost playful, \u201cthen measure again.\u201d",
+    "From na\u00efvet\u00e9 to expertise \u2014 a long road \u2013 the system kept the contract opaque and stable.",
+    "The motto was \u2018measure twice\u2019, followed by the practical reminder, \u201cthen measure again.\u201d",
 ]
 
 

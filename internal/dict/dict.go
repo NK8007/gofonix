@@ -3,9 +3,9 @@
 // a case-insensitive lookup, and SHA-256 provenance metadata.
 //
 // This is an internal package and carries no API stability guarantee. The
-// public g2p package consumes it to populate Result.Metadata. Slice 2 stores
-// RAW ARPAbet symbols only — there is no mapping to neutral phonemes and no
-// stress stripping; both are deferred to Slice 3.
+// public g2p package consumes it to populate Result.Metadata. This package
+// stores RAW ARPAbet symbols only — mapping to neutral phonemes and stress
+// stripping are performed by the internal/lang/en/arpabet bridge, not here.
 package dict
 
 import (
@@ -43,7 +43,7 @@ type variantPhones struct {
 // and malformed lines are skipped. The unnumbered (variant 0) pronunciation of
 // a key becomes Entry.Canonical; numbered alternates (variant >= 1) are appended
 // to Entry.Alternates in ascending variant order. Load never returns an error
-// in Slice 2 (malformed lines are skipped, not rejected), but the error return
+// today (malformed lines are skipped, not rejected), but the error return
 // is part of the contract for forward compatibility.
 func Load(data []byte) (*Dict, error) {
 	pending := make(map[string]*pendingEntry)
@@ -111,7 +111,7 @@ func Load(data []byte) (*Dict, error) {
 //     found — Lookup returns (Entry{}, false). v0.1 never promotes an alternate
 //     to canonical.
 //   - When found, the returned Entry.Canonical holds the base phonemes and
-//     Entry.Alternates holds the remaining variants (unused in Slice 2).
+//     Entry.Alternates holds the remaining variants (currently unused).
 func (d *Dict) Lookup(word string) (Entry, bool) {
 	key := strings.ToLower(word)
 	e, ok := d.entries[key]

@@ -93,7 +93,7 @@ type TokenResult struct {
 }
 
 // ResultMetadata exposes reproducibility-relevant versions so experiment
-// harnesses cannot silently omit them (ADR-0001, Cross-issue E).
+// harnesses cannot silently omit them (ADR-0001; reproducibility, ADR-0010).
 type ResultMetadata struct {
 	// GofonixVersion is the Gofonix release/module version that produced this
 	// result. It is distinct from SchemaVersion, FeatureSchemaVersion, dictionary
@@ -120,12 +120,12 @@ type ResultMetadata struct {
 	// load of the external full CMUdict under -tags gofonix_full_dict).
 	DictionaryID string
 	// DictionaryChecksum is the SHA-256 of the dictionary used (ADR-0004,
-	// ADR-0010 Checksum Policy). For the embedded mini-dict it is computed
+	// ADR-0010). For the embedded mini-dict it is computed
 	// over the embedded bytes; for the full dict it is the frozen expected
 	// digest pinned to FullID by ADR-0010.
 	DictionaryChecksum string
 	// FullDictAvailable is the programmatic signal for "did the full CMUdict
-	// load successfully?" (ADR-0010, Public API Impact §1). It is true only
+	// load successfully?" (ADR-0010, metadata). It is true only
 	// when the engine was constructed under -tags gofonix_full_dict AND the
 	// on-disk file passed every check (path resolution, size band, SHA-256,
 	// parse). It is false in every other case — including all default builds.

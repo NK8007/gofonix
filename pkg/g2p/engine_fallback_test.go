@@ -6,7 +6,7 @@ import (
 	"github.com/NK8007/gofonix/internal/lang/en/fallback"
 )
 
-// Phase 2 / Slice 3: deterministic OOV rule-fallback integration into Process()
+// Deterministic OOV rule-fallback integration into Process()
 // (ADR-0009). These tests pin metadata, provenance (SourceDict wins over
 // fallback, fallback-resolved -> SourceRuleFallback, declined -> SourceUnknown),
 // fallback phoneme counts, alignment/projection mechanics shared with dict hits,
@@ -39,9 +39,9 @@ func process(t *testing.T, e *Engine, in string) Result {
 // A. Metadata
 // ---------------------------------------------------------------------------
 
-// TestSlice3MetadataBatch confirms the active-fallback metadata: the rule
+// TestMetadataBatchFallbackActive confirms the active-fallback metadata: the rule
 // version string and the amended OOV policy (ADR-0009).
-func TestSlice3MetadataBatch(t *testing.T) {
+func TestMetadataBatchFallbackActive(t *testing.T) {
 	e := batchEngine(t)
 	res := process(t, e, "ship")
 	if res.Metadata.FallbackRulesVersion != "fallback-en-v0.2" {
@@ -58,8 +58,8 @@ func TestSlice3MetadataBatch(t *testing.T) {
 	}
 }
 
-// TestSlice3MetadataOracle confirms ModeOracle also reports the active fallback.
-func TestSlice3MetadataOracle(t *testing.T) {
+// TestMetadataOracleFallbackActive confirms ModeOracle also reports the active fallback.
+func TestMetadataOracleFallbackActive(t *testing.T) {
 	e, _ := New(Options{Language: "en", Mode: ModeOracle})
 	res := process(t, e, "ship")
 	if res.Metadata.FallbackRulesVersion != "fallback-en-v0.2" {
@@ -72,9 +72,9 @@ func TestSlice3MetadataOracle(t *testing.T) {
 	}
 }
 
-// TestSlice3MetadataCausalInactive confirms ModeCausal reports the fallback as
+// TestMetadataCausalFallbackInactive confirms ModeCausal reports the fallback as
 // inactive (empty string) since it never applies the fallback (ADR-0003/0009).
-func TestSlice3MetadataCausalInactive(t *testing.T) {
+func TestMetadataCausalFallbackInactive(t *testing.T) {
 	e, _ := New(Options{Language: "en", Mode: ModeCausal})
 	res := process(t, e, "ship")
 	if res.Metadata.FallbackRulesVersion != "" {
@@ -87,9 +87,9 @@ func TestSlice3MetadataCausalInactive(t *testing.T) {
 // B. Source behavior
 // ---------------------------------------------------------------------------
 
-// TestSlice3SourceBehavior pins provenance across dict hits, fallback-eligible
+// TestSourceBehavior pins provenance across dict hits, fallback-eligible
 // OOV words, and declined tokens (ADR-0009 Provenance / Failure Cases).
-func TestSlice3SourceBehavior(t *testing.T) {
+func TestSourceBehavior(t *testing.T) {
 	e := batchEngine(t)
 	cases := []struct {
 		in      string // input string
@@ -113,9 +113,9 @@ func TestSlice3SourceBehavior(t *testing.T) {
 	}
 }
 
-// TestSlice3PunctuationWhitespaceUnknown confirms punctuation and whitespace
+// TestPunctuationWhitespaceUnknown confirms punctuation and whitespace
 // tokens never trigger the fallback and stay SourceUnknown.
-func TestSlice3PunctuationWhitespaceUnknown(t *testing.T) {
+func TestPunctuationWhitespaceUnknown(t *testing.T) {
 	e := batchEngine(t)
 	res := process(t, e, ". \t")
 	for _, tr := range res.Tokens {
@@ -136,14 +136,14 @@ func TestSlice3PunctuationWhitespaceUnknown(t *testing.T) {
 // C. Fallback pronunciation (phoneme counts + non-zero masks)
 // ---------------------------------------------------------------------------
 
-// TestSlice3FallbackPhonemeCounts pins the phoneme counts for representative
+// TestFallbackPhonemeCounts pins the phoneme counts for representative
 // fallback words against the frozen fallback-en-v0.2 table (ADR-0009):
 //
 //	ship  -> SH IH P            (3)
 //	thing -> DH IH NG           (3)
 //	phone -> F AO N EH          (4)
 //	xenon -> K S EH N AO N      (6)  (x -> K S)
-func TestSlice3FallbackPhonemeCounts(t *testing.T) {
+func TestFallbackPhonemeCounts(t *testing.T) {
 	e := batchEngine(t)
 	cases := []struct {
 		word string
@@ -167,10 +167,10 @@ func TestSlice3FallbackPhonemeCounts(t *testing.T) {
 	}
 }
 
-// TestSlice3FallbackNonZeroMasks confirms a fallback word projects non-zero
+// TestFallbackNonZeroMasks confirms a fallback word projects non-zero
 // FeatureMasks over its byte positions in ModeBatch (identical mechanics to
 // dict hits).
-func TestSlice3FallbackNonZeroMasks(t *testing.T) {
+func TestFallbackNonZeroMasks(t *testing.T) {
 	e := batchEngine(t)
 	const in = "ship"
 	res := process(t, e, in)
@@ -189,10 +189,10 @@ func TestSlice3FallbackNonZeroMasks(t *testing.T) {
 // D. Alignment / projection
 // ---------------------------------------------------------------------------
 
-// TestSlice3FallbackAlignmentLength confirms a fallback word's alignment length
+// TestFallbackAlignmentLength confirms a fallback word's alignment length
 // equals its phoneme count and partitions its byte span exactly like a dict hit
 // (ADR-0007).
-func TestSlice3FallbackAlignmentLength(t *testing.T) {
+func TestFallbackAlignmentLength(t *testing.T) {
 	e := batchEngine(t)
 	for _, word := range []string{"ship", "thing", "phone", "xenon"} {
 		res := process(t, e, word)
@@ -202,15 +202,15 @@ func TestSlice3FallbackAlignmentLength(t *testing.T) {
 			t.Errorf("%q: alignment len = %d, want %d (==#phonemes)",
 				word, len(pr.Alignment), len(pr.Phonemes))
 		}
-		// Reuse the slice4 partition checker: contiguous, non-overlapping,
+		// Reuse the alignment partition checker: contiguous, non-overlapping,
 		// in-bounds, spanning the whole token byte range.
 		assertPartitionsToken(t, word, tr)
 	}
 }
 
-// TestSlice3FallbackThenZeroMask confirms "ship." resolves the fallback on
+// TestFallbackThenZeroMask confirms "ship." resolves the fallback on
 // "ship" and emits a zero mask on the trailing "." (ADR-0009 Output Semantics).
-func TestSlice3FallbackThenZeroMask(t *testing.T) {
+func TestFallbackThenZeroMask(t *testing.T) {
 	e := batchEngine(t)
 	const in = "ship."
 	res := process(t, e, in)
@@ -244,13 +244,13 @@ func TestSlice3FallbackThenZeroMask(t *testing.T) {
 // E. ModeCausal scaffold-only
 // ---------------------------------------------------------------------------
 
-// TestSlice3CausalFallbackAllZero confirms a fallback-eligible word in
+// TestCausalFallbackAllZero confirms a fallback-eligible word in
 // ModeCausal produces an all-zero FeatureStream and is NOT mixed with the
 // annotation fallback. Documented choice: the token stays SourceUnknown with
 // empty phonemes in ModeCausal (the simplest policy; the causal scaffold never
 // applies the fallback, and the annotation stream is never mixed with the
 // causal scaffold) (ADR-0003/0009).
-func TestSlice3CausalFallbackAllZero(t *testing.T) {
+func TestCausalFallbackAllZero(t *testing.T) {
 	e, _ := New(Options{Language: "en", Mode: ModeCausal})
 	const in = "ship thing phone"
 	res := process(t, e, in)
